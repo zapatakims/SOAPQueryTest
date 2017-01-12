@@ -19,3 +19,6 @@ C:\Users\Danny\Downloads\SOAPQueryTest\SOAPQueryTest\bin\Debug\Microsoft.Build.U
 C:\Users\Danny\Downloads\SOAPQueryTest\SOAPQueryTest\obj\x86\Debug\SOAPQueryTest.exe
 C:\Users\Danny\Downloads\SOAPQueryTest\SOAPQueryTest\obj\x86\Debug\SOAPQueryTest.pdb
 C:\Users\Danny\Downloads\SOAPQueryTest\SOAPQueryTest\obj\x86\Debug\SOAPQueryTest.csprojResolveAssemblyReference.cache
+D:\GIT\SOAPQueryTest\SOAPQueryTest\bin\Debug\SOAPQueryTest.exe.config
+D:\GIT\SOAPQueryTest\SOAPQueryTest\obj\x86\Debug\SOAPQueryTest.exe
+D:\GIT\SOAPQueryTest\SOAPQueryTest\obj\x86\Debug\SOAPQueryTest.pdb

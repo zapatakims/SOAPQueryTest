@@ -20,18 +20,6 @@ namespace SOAPQueryTest
                 queryText = null;
 
             try {
-                //Console.Write("Enter the host name: ");
-                //host = Console.ReadLine();
-
-                //Console.Write("Enter the Geneva port: ");
-                //port = Int32.Parse(Console.ReadLine());
-
-                //Console.Write("Enter the Geneva username: ");
-                //username = Console.ReadLine();
-
-                //Console.Write("Enter the Geneva password: ");
-                //password = Console.ReadLine();
-
                 client = new GenevaSoapServiceClient("GenevaBasicHttpEndPoint");
                 Console.WriteLine("\r\n\r\nCreated GenevaSoapServiceClient");
 
