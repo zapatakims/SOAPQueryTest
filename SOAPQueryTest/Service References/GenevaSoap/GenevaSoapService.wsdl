@@ -1,0 +1,1583 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy" xmlns:wsa10="http://www.w3.org/2005/08/addressing" xmlns:tns="http://www.advent.com/geneva/soapservice" xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd" xmlns:xsd="http://www.w3.org/2001/XMLSchema" name="GenevaSoapService" targetNamespace="http://www.advent.com/geneva/soapservice" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsp:Policy wsu:Id="GenevaSoapServiceTcpEndPoint_policy">
+    <wsp:ExactlyOne>
+      <wsp:All>
+        <msb:BinaryEncoding xmlns:msb="http://schemas.microsoft.com/ws/06/2004/mspolicy/netbinary1" />
+        <sp:TransportBinding xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+          <wsp:Policy>
+            <sp:TransportToken>
+              <wsp:Policy>
+                <msf:WindowsTransportSecurity xmlns:msf="http://schemas.microsoft.com/ws/2006/05/framing/policy">
+                  <msf:ProtectionLevel>EncryptAndSign</msf:ProtectionLevel>
+                </msf:WindowsTransportSecurity>
+              </wsp:Policy>
+            </sp:TransportToken>
+            <sp:AlgorithmSuite>
+              <wsp:Policy>
+                <sp:Basic256 />
+              </wsp:Policy>
+            </sp:AlgorithmSuite>
+            <sp:Layout>
+              <wsp:Policy>
+                <sp:Strict />
+              </wsp:Policy>
+            </sp:Layout>
+          </wsp:Policy>
+        </sp:TransportBinding>
+        <wsaw:UsingAddressing />
+      </wsp:All>
+    </wsp:ExactlyOne>
+  </wsp:Policy>
+  <wsdl:types>
+    <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.advent.com/geneva/soapservice">
+      <xsd:import namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+      <xsd:element name="GenevaConnection">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="connection" nillable="true" type="tns:GenevaConnectionParameters" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaConnectionParameters">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="GenevaCluster" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="GenevaHost" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="GenevaPort" type="xsd:int" />
+          <xsd:element name="Password" nillable="true" type="xsd:string" />
+          <xsd:element name="Username" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaConnectionParameters" nillable="true" type="tns:GenevaConnectionParameters" />
+      <xsd:element name="GenevaConnectionResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GenevaConnectionResult" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="InvalidGenevaCredentials">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:GenevaExceptionBase">
+            <xsd:sequence />
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="InvalidGenevaCredentials" nillable="true" type="tns:InvalidGenevaCredentials" />
+      <xsd:complexType name="GenevaExceptionBase">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Message" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaExceptionBase" nillable="true" type="tns:GenevaExceptionBase" />
+      <xsd:complexType name="InvalidParameter">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:GenevaExceptionBase">
+            <xsd:sequence />
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="InvalidParameter" nillable="true" type="tns:InvalidParameter" />
+      <xsd:complexType name="InvalidGenevaSession">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:GenevaExceptionBase">
+            <xsd:sequence />
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="InvalidGenevaSession" nillable="true" type="tns:InvalidGenevaSession" />
+      <xsd:element name="Close">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="CloseResponse">
+        <xsd:complexType>
+          <xsd:sequence />
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="SwitchFirm">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="firmName" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="SwitchFirmResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="SwitchFirmResult" type="xsd:boolean" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaError">
+        <xsd:complexContent mixed="false">
+          <xsd:extension base="tns:GenevaExceptionBase">
+            <xsd:sequence />
+          </xsd:extension>
+        </xsd:complexContent>
+      </xsd:complexType>
+      <xsd:element name="GenevaError" nillable="true" type="tns:GenevaError" />
+      <xsd:element name="DescribeClassString">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="className" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="DescribeClassStringResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="DescribeClassStringResult" nillable="true" type="tns:GenevaResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaResults">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Result" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaResults" nillable="true" type="tns:GenevaResults" />
+      <xsd:element name="DescribeClass">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="className" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="DescribeClassResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element xmlns:q1="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="DescribeClassResult" nillable="true" type="q1:ArrayOfstring" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteGSQL">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="genevaSql" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteGSQLResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteGSQLResult" nillable="true" type="tns:GenevaResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteReportAsPDF">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="reportName" nillable="true" type="xsd:string" />
+            <xsd:element xmlns:q2="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="reportParameters" nillable="true" type="q2:ArrayOfKeyValueOfstringstring" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteReportAsPDFResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteReportAsPDFResult" nillable="true" type="xsd:base64Binary" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteReportFormatted">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="reportName" nillable="true" type="xsd:string" />
+            <xsd:element xmlns:q3="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="reportParameters" nillable="true" type="q3:ArrayOfKeyValueOfstringstring" />
+            <xsd:element minOccurs="0" name="format" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteReportFormattedResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteReportFormattedResult" nillable="true" type="tns:GenevaResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteReport">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="reportName" nillable="true" type="xsd:string" />
+            <xsd:element xmlns:q4="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="reportParameters" nillable="true" type="q4:ArrayOfKeyValueOfstringstring" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteReportResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteReportResult" nillable="true" type="tns:GenevaReportResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaReportResults">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Results" nillable="true" type="tns:ArrayOfGenevaReportResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaReportResults" nillable="true" type="tns:GenevaReportResults" />
+      <xsd:complexType name="ArrayOfGenevaReportResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GenevaReportResult" nillable="true" type="tns:GenevaReportResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGenevaReportResult" nillable="true" type="tns:ArrayOfGenevaReportResult" />
+      <xsd:complexType name="GenevaReportResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="AddendumErrors" nillable="true" type="tns:ArrayOfGenevaResultRecord" />
+          <xsd:element minOccurs="0" name="Header" nillable="true" type="tns:ArrayOfGenevaResultRecord" />
+          <xsd:element minOccurs="0" name="ParameterSet" nillable="true" type="tns:ArrayOfGenevaResultRecord" />
+          <xsd:element minOccurs="0" name="PortfolioName" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="Record" nillable="true" type="tns:ArrayOfGenevaResultRecord" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaReportResult" nillable="true" type="tns:GenevaReportResult" />
+      <xsd:complexType name="ArrayOfGenevaResultRecord">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GenevaResultRecord" nillable="true" type="tns:GenevaResultRecord" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGenevaResultRecord" nillable="true" type="tns:ArrayOfGenevaResultRecord" />
+      <xsd:complexType name="GenevaResultRecord">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="ResultElements" nillable="true" type="tns:ArrayOfGenevaResultElement" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaResultRecord" nillable="true" type="tns:GenevaResultRecord" />
+      <xsd:complexType name="ArrayOfGenevaResultElement">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GenevaResultElement" nillable="true" type="tns:GenevaResultElement" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGenevaResultElement" nillable="true" type="tns:ArrayOfGenevaResultElement" />
+      <xsd:complexType name="GenevaResultElement">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Name" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="Value" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaResultElement" nillable="true" type="tns:GenevaResultElement" />
+      <xsd:element name="GetReportList">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetReportListResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetReportListResult" nillable="true" type="tns:GenevaReportDefList" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaReportDefList">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Reports" nillable="true" type="tns:ArrayOfGenevaReportDef" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaReportDefList" nillable="true" type="tns:GenevaReportDefList" />
+      <xsd:complexType name="ArrayOfGenevaReportDef">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GenevaReportDef" nillable="true" type="tns:GenevaReportDef" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGenevaReportDef" nillable="true" type="tns:ArrayOfGenevaReportDef" />
+      <xsd:complexType name="GenevaReportDef">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="ReportFileName" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="ReportName" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaReportDef" nillable="true" type="tns:GenevaReportDef" />
+      <xsd:element name="GetReportDetail">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="reportName" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetReportDetailResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetReportDetailResult" nillable="true" type="tns:GenevaReportDetail" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaReportDetail">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="ReportArgs" nillable="true" type="tns:ArrayOfGenevaReportArg" />
+          <xsd:element xmlns:q5="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="SubmissionTypes" nillable="true" type="q5:ArrayOfstring" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaReportDetail" nillable="true" type="tns:GenevaReportDetail" />
+      <xsd:complexType name="ArrayOfGenevaReportArg">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GenevaReportArg" nillable="true" type="tns:GenevaReportArg" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGenevaReportArg" nillable="true" type="tns:ArrayOfGenevaReportArg" />
+      <xsd:complexType name="GenevaReportArg">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="ArgumentDefault" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="ArgumentName" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="ArgumentType" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaReportArg" nillable="true" type="tns:GenevaReportArg" />
+      <xsd:element name="GetQueryList">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetQueryListResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetQueryListResult" nillable="true" type="tns:GenevaQueryDefList" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaQueryDefList">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="QueryDefs" nillable="true" type="tns:ArrayOfGenevaQueryDef" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaQueryDefList" nillable="true" type="tns:GenevaQueryDefList" />
+      <xsd:complexType name="ArrayOfGenevaQueryDef">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GenevaQueryDef" nillable="true" type="tns:GenevaQueryDef" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGenevaQueryDef" nillable="true" type="tns:ArrayOfGenevaQueryDef" />
+      <xsd:complexType name="GenevaQueryDef">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="QueryName" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaQueryDef" nillable="true" type="tns:GenevaQueryDef" />
+      <xsd:element name="GetQueryDetail">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="queryName" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="GetQueryDetailResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="GetQueryDetailResult" nillable="true" type="tns:GenevaQueryDetail" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaQueryDetail">
+        <xsd:sequence>
+          <xsd:element xmlns:q6="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="QueryArgs" nillable="true" type="q6:ArrayOfstring" />
+          <xsd:element minOccurs="0" name="QueryName" nillable="true" type="xsd:string" />
+          <xsd:element xmlns:q7="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="QueryResultSet" nillable="true" type="q7:ArrayOfstring" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaQueryDetail" nillable="true" type="tns:GenevaQueryDetail" />
+      <xsd:element name="ExecuteQueryString">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="queryName" nillable="true" type="xsd:string" />
+            <xsd:element xmlns:q8="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="queryParameters" nillable="true" type="q8:ArrayOfKeyValueOfstringstring" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteQueryStringResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteQueryStringResult" nillable="true" type="tns:GenevaResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteQuery">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="queryName" nillable="true" type="xsd:string" />
+            <xsd:element xmlns:q9="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="queryParameters" nillable="true" type="q9:ArrayOfKeyValueOfstringstring" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteQueryResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteQueryResult" nillable="true" type="tns:GenevaQueryResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaQueryResults">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Results" nillable="true" type="tns:ArrayOfGenevaQueryResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaQueryResults" nillable="true" type="tns:GenevaQueryResults" />
+      <xsd:complexType name="ArrayOfGenevaQueryResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GenevaQueryResult" nillable="true" type="tns:GenevaQueryResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGenevaQueryResult" nillable="true" type="tns:ArrayOfGenevaQueryResult" />
+      <xsd:complexType name="GenevaQueryResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="PortfolioName" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="ResultRecords" nillable="true" type="tns:ArrayOfGenevaResultRecord" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaQueryResult" nillable="true" type="tns:GenevaQueryResult" />
+      <xsd:element name="ExecuteSelectString">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="selectString" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteSelectStringResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteSelectStringResult" nillable="true" type="tns:GenevaResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteSelect">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="selectString" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="ExecuteSelectResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteSelectResult" nillable="true" type="tns:GenevaSelectResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaSelectResults">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Results" nillable="true" type="tns:ArrayOfGenevaSelectResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaSelectResults" nillable="true" type="tns:GenevaSelectResults" />
+      <xsd:complexType name="ArrayOfGenevaSelectResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="GenevaSelectResult" nillable="true" type="tns:GenevaSelectResult" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfGenevaSelectResult" nillable="true" type="tns:ArrayOfGenevaSelectResult" />
+      <xsd:complexType name="GenevaSelectResult">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Fields" nillable="true" type="tns:ArrayOfGenevaResultRecord" />
+          <xsd:element minOccurs="0" name="PortfolioName" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaSelectResult" nillable="true" type="tns:GenevaSelectResult" />
+      <xsd:element name="LoadRecord">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="loaderXML" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="loaderFlags" nillable="true" type="xsd:string" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="LoadRecordResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="LoadRecordResult" nillable="true" type="tns:GenevaLoadResults" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaLoadResults">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="Result" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaLoadResults" nillable="true" type="tns:GenevaLoadResults" />
+      <xsd:element name="ExecuteSSRSReport">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="connectionParameters" nillable="true" type="tns:GenevaConnectionParameters" />
+            <xsd:element minOccurs="0" name="sessionId" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="appserver" nillable="true" type="xsd:string" />
+            <xsd:element minOccurs="0" name="reportParams" nillable="true" type="tns:GenevaSSRSReportParams" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:complexType name="GenevaSSRSReportParams">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" name="ReportName" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="ReportOutputFormat" type="tns:FileFormatSSRS" />
+          <xsd:element xmlns:q10="http://schemas.microsoft.com/2003/10/Serialization/Arrays" minOccurs="0" name="ReportParameters" nillable="true" type="q10:ArrayOfKeyValueOfstringanyType" />
+          <xsd:element minOccurs="0" name="ReportPath" nillable="true" type="xsd:string" />
+          <xsd:element minOccurs="0" name="ReportServerURL" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="GenevaSSRSReportParams" nillable="true" type="tns:GenevaSSRSReportParams" />
+      <xsd:simpleType name="FileFormatSSRS">
+        <xsd:list>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string">
+              <xsd:enumeration value="PDF" />
+              <xsd:enumeration value="EXCEL" />
+              <xsd:enumeration value="WORD" />
+              <xsd:enumeration value="MHTML" />
+              <xsd:enumeration value="XML" />
+              <xsd:enumeration value="CSV" />
+              <xsd:enumeration value="IMAGE" />
+              <xsd:enumeration value="HTML4_0" />
+            </xsd:restriction>
+          </xsd:simpleType>
+        </xsd:list>
+      </xsd:simpleType>
+      <xsd:element name="FileFormatSSRS" nillable="true" type="tns:FileFormatSSRS" />
+      <xsd:element name="ExecuteSSRSReportResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element minOccurs="0" name="ExecuteSSRSReportResult" nillable="true" type="xsd:base64Binary" />
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+    <xs:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/" attributeFormDefault="qualified" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+      <xs:element name="anyType" nillable="true" type="xs:anyType" />
+      <xs:element name="anyURI" nillable="true" type="xs:anyURI" />
+      <xs:element name="base64Binary" nillable="true" type="xs:base64Binary" />
+      <xs:element name="boolean" nillable="true" type="xs:boolean" />
+      <xs:element name="byte" nillable="true" type="xs:byte" />
+      <xs:element name="dateTime" nillable="true" type="xs:dateTime" />
+      <xs:element name="decimal" nillable="true" type="xs:decimal" />
+      <xs:element name="double" nillable="true" type="xs:double" />
+      <xs:element name="float" nillable="true" type="xs:float" />
+      <xs:element name="int" nillable="true" type="xs:int" />
+      <xs:element name="long" nillable="true" type="xs:long" />
+      <xs:element name="QName" nillable="true" type="xs:QName" />
+      <xs:element name="short" nillable="true" type="xs:short" />
+      <xs:element name="string" nillable="true" type="xs:string" />
+      <xs:element name="unsignedByte" nillable="true" type="xs:unsignedByte" />
+      <xs:element name="unsignedInt" nillable="true" type="xs:unsignedInt" />
+      <xs:element name="unsignedLong" nillable="true" type="xs:unsignedLong" />
+      <xs:element name="unsignedShort" nillable="true" type="xs:unsignedShort" />
+      <xs:element name="char" nillable="true" type="tns:char" />
+      <xs:simpleType name="char">
+        <xs:restriction base="xs:int" />
+      </xs:simpleType>
+      <xs:element name="duration" nillable="true" type="tns:duration" />
+      <xs:simpleType name="duration">
+        <xs:restriction base="xs:duration">
+          <xs:pattern value="\-?P(\d*D)?(T(\d*H)?(\d*M)?(\d*(\.\d*)?S)?)?" />
+          <xs:minInclusive value="-P10675199DT2H48M5.4775808S" />
+          <xs:maxInclusive value="P10675199DT2H48M5.4775807S" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:element name="guid" nillable="true" type="tns:guid" />
+      <xs:simpleType name="guid">
+        <xs:restriction base="xs:string">
+          <xs:pattern value="[\da-fA-F]{8}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{4}-[\da-fA-F]{12}" />
+        </xs:restriction>
+      </xs:simpleType>
+      <xs:attribute name="FactoryType" type="xs:QName" />
+      <xs:attribute name="Id" type="xs:ID" />
+      <xs:attribute name="Ref" type="xs:IDREF" />
+    </xs:schema>
+    <xsd:schema xmlns:tns="http://schemas.microsoft.com/2003/10/Serialization/Arrays" elementFormDefault="qualified" targetNamespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays">
+      <xsd:complexType name="ArrayOfstring">
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="xsd:string" />
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfstring" nillable="true" type="tns:ArrayOfstring" />
+      <xsd:complexType name="ArrayOfKeyValueOfstringstring">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <IsDictionary xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsDictionary>
+          </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="KeyValueOfstringstring">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="Key" nillable="true" type="xsd:string" />
+                <xsd:element name="Value" nillable="true" type="xsd:string" />
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfKeyValueOfstringstring" nillable="true" type="tns:ArrayOfKeyValueOfstringstring" />
+      <xsd:complexType name="ArrayOfKeyValueOfstringanyType">
+        <xsd:annotation>
+          <xsd:appinfo>
+            <IsDictionary xmlns="http://schemas.microsoft.com/2003/10/Serialization/">true</IsDictionary>
+          </xsd:appinfo>
+        </xsd:annotation>
+        <xsd:sequence>
+          <xsd:element minOccurs="0" maxOccurs="unbounded" name="KeyValueOfstringanyType">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="Key" nillable="true" type="xsd:string" />
+                <xsd:element name="Value" nillable="true" type="xsd:anyType" />
+              </xsd:sequence>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:sequence>
+      </xsd:complexType>
+      <xsd:element name="ArrayOfKeyValueOfstringanyType" nillable="true" type="tns:ArrayOfKeyValueOfstringanyType" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="IGenevaSoapService_GenevaConnection_InputMessage">
+    <wsdl:part name="parameters" element="tns:GenevaConnection" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GenevaConnection_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GenevaConnectionResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GenevaConnection_InvalidGenevaCredentialsFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidGenevaCredentials" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GenevaConnection_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GenevaConnection_InvalidGenevaSessionFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidGenevaSession" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_Close_InputMessage">
+    <wsdl:part name="parameters" element="tns:Close" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_Close_OutputMessage">
+    <wsdl:part name="parameters" element="tns:CloseResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_Close_InvalidGenevaSessionFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidGenevaSession" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_SwitchFirm_InputMessage">
+    <wsdl:part name="parameters" element="tns:SwitchFirm" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_SwitchFirm_OutputMessage">
+    <wsdl:part name="parameters" element="tns:SwitchFirmResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_SwitchFirm_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_SwitchFirm_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_DescribeClassString_InputMessage">
+    <wsdl:part name="parameters" element="tns:DescribeClassString" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_DescribeClassString_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DescribeClassStringResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_DescribeClassString_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_DescribeClassString_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_DescribeClass_InputMessage">
+    <wsdl:part name="parameters" element="tns:DescribeClass" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_DescribeClass_OutputMessage">
+    <wsdl:part name="parameters" element="tns:DescribeClassResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_DescribeClass_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_DescribeClass_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteGSQL_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteGSQL" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteGSQL_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteGSQLResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteGSQL_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteGSQL_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReportAsPDF_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteReportAsPDF" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReportAsPDF_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteReportAsPDFResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReportAsPDF_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReportAsPDF_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReportFormatted_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteReportFormatted" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReportFormatted_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteReportFormattedResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReportFormatted_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReportFormatted_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReport_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteReport" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReport_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReport_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteReport_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetReportList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetReportList" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetReportList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetReportListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetReportList_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetReportList_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetReportDetail_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetReportDetail" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetReportDetail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetReportDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetReportDetail_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetReportDetail_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetQueryList_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetQueryList" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetQueryList_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetQueryListResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetQueryList_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetQueryList_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetQueryDetail_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetQueryDetail" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetQueryDetail_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetQueryDetailResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetQueryDetail_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_GetQueryDetail_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteQueryString_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteQueryString" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteQueryString_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteQueryStringResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteQueryString_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteQueryString_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteQuery_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteQuery" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteQuery_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteQueryResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteQuery_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteQuery_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSelectString_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteSelectString" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSelectString_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteSelectStringResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSelectString_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSelectString_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSelect_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteSelect" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSelect_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteSelectResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSelect_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSelect_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_LoadRecord_InputMessage">
+    <wsdl:part name="parameters" element="tns:LoadRecord" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_LoadRecord_OutputMessage">
+    <wsdl:part name="parameters" element="tns:LoadRecordResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_LoadRecord_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_LoadRecord_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSSRSReport_InputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteSSRSReport" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSSRSReport_OutputMessage">
+    <wsdl:part name="parameters" element="tns:ExecuteSSRSReportResponse" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSSRSReport_GenevaErrorFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:GenevaError" />
+  </wsdl:message>
+  <wsdl:message name="IGenevaSoapService_ExecuteSSRSReport_InvalidParameterFault_FaultMessage">
+    <wsdl:part name="detail" element="tns:InvalidParameter" />
+  </wsdl:message>
+  <wsdl:portType name="IGenevaSoapService">
+    <wsdl:operation name="GenevaConnection">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSession/GenevaConnection" message="tns:IGenevaSoapService_GenevaConnection_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSession/GenevaConnectionResponse" message="tns:IGenevaSoapService_GenevaConnection_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSession/GenevaConnectionInvalidGenevaCredentialsFault" name="InvalidGenevaCredentialsFault" message="tns:IGenevaSoapService_GenevaConnection_InvalidGenevaCredentialsFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSession/GenevaConnectionInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_GenevaConnection_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSession/GenevaConnectionInvalidGenevaSessionFault" name="InvalidGenevaSessionFault" message="tns:IGenevaSoapService_GenevaConnection_InvalidGenevaSessionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="Close">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSession/Close" message="tns:IGenevaSoapService_Close_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSession/CloseResponse" message="tns:IGenevaSoapService_Close_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSession/CloseInvalidGenevaSessionFault" name="InvalidGenevaSessionFault" message="tns:IGenevaSoapService_Close_InvalidGenevaSessionFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="SwitchFirm">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/SwitchFirm" message="tns:IGenevaSoapService_SwitchFirm_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/SwitchFirmResponse" message="tns:IGenevaSoapService_SwitchFirm_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/SwitchFirmGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_SwitchFirm_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/SwitchFirmInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_SwitchFirm_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DescribeClassString">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassString" message="tns:IGenevaSoapService_DescribeClassString_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassStringResponse" message="tns:IGenevaSoapService_DescribeClassString_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassStringGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_DescribeClassString_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassStringInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_DescribeClassString_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="DescribeClass">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClass" message="tns:IGenevaSoapService_DescribeClass_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassResponse" message="tns:IGenevaSoapService_DescribeClass_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_DescribeClass_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_DescribeClass_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteGSQL">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteGSQL" message="tns:IGenevaSoapService_ExecuteGSQL_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteGSQLResponse" message="tns:IGenevaSoapService_ExecuteGSQL_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteGSQLGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteGSQL_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteGSQLInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteGSQL_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReportAsPDF">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportAsPDF" message="tns:IGenevaSoapService_ExecuteReportAsPDF_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportAsPDFResponse" message="tns:IGenevaSoapService_ExecuteReportAsPDF_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportAsPDFInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteReportAsPDF_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportAsPDFGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteReportAsPDF_GenevaErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReportFormatted">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportFormatted" message="tns:IGenevaSoapService_ExecuteReportFormatted_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportFormattedResponse" message="tns:IGenevaSoapService_ExecuteReportFormatted_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportFormattedInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteReportFormatted_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportFormattedGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteReportFormatted_GenevaErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReport">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReport" message="tns:IGenevaSoapService_ExecuteReport_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportResponse" message="tns:IGenevaSoapService_ExecuteReport_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteReport_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteReport_GenevaErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReportList">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportList" message="tns:IGenevaSoapService_GetReportList_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportListResponse" message="tns:IGenevaSoapService_GetReportList_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportListInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_GetReportList_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportListGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_GetReportList_GenevaErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetReportDetail">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportDetail" message="tns:IGenevaSoapService_GetReportDetail_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportDetailResponse" message="tns:IGenevaSoapService_GetReportDetail_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportDetailGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_GetReportDetail_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportDetailInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_GetReportDetail_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetQueryList">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryList" message="tns:IGenevaSoapService_GetQueryList_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryListResponse" message="tns:IGenevaSoapService_GetQueryList_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryListInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_GetQueryList_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryListGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_GetQueryList_GenevaErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="GetQueryDetail">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryDetail" message="tns:IGenevaSoapService_GetQueryDetail_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryDetailResponse" message="tns:IGenevaSoapService_GetQueryDetail_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryDetailGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_GetQueryDetail_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryDetailInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_GetQueryDetail_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteQueryString">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryString" message="tns:IGenevaSoapService_ExecuteQueryString_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryStringResponse" message="tns:IGenevaSoapService_ExecuteQueryString_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryStringInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteQueryString_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryStringGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteQueryString_GenevaErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteQuery">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQuery" message="tns:IGenevaSoapService_ExecuteQuery_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryResponse" message="tns:IGenevaSoapService_ExecuteQuery_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteQuery_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteQuery_GenevaErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSelectString">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectString" message="tns:IGenevaSoapService_ExecuteSelectString_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectStringResponse" message="tns:IGenevaSoapService_ExecuteSelectString_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectStringGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteSelectString_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectStringInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteSelectString_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSelect">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelect" message="tns:IGenevaSoapService_ExecuteSelect_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectResponse" message="tns:IGenevaSoapService_ExecuteSelect_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteSelect_InvalidParameterFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteSelect_GenevaErrorFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="LoadRecord">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/LoadRecord" message="tns:IGenevaSoapService_LoadRecord_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/LoadRecordResponse" message="tns:IGenevaSoapService_LoadRecord_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/LoadRecordGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_LoadRecord_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/LoadRecordInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_LoadRecord_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSSRSReport">
+      <wsdl:input wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSSRSReport" message="tns:IGenevaSoapService_ExecuteSSRSReport_InputMessage" />
+      <wsdl:output wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSSRSReportResponse" message="tns:IGenevaSoapService_ExecuteSSRSReport_OutputMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSSRSReportGenevaErrorFault" name="GenevaErrorFault" message="tns:IGenevaSoapService_ExecuteSSRSReport_GenevaErrorFault_FaultMessage" />
+      <wsdl:fault wsaw:Action="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSSRSReportInvalidParameterFault" name="InvalidParameterFault" message="tns:IGenevaSoapService_ExecuteSSRSReport_InvalidParameterFault_FaultMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="GenevaBasicHttpEndPoint" type="tns:IGenevaSoapService">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="GenevaConnection">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSession/GenevaConnection" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidGenevaCredentialsFault">
+        <soap:fault use="literal" name="InvalidGenevaCredentialsFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidGenevaSessionFault">
+        <soap:fault use="literal" name="InvalidGenevaSessionFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Close">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSession/Close" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidGenevaSessionFault">
+        <soap:fault use="literal" name="InvalidGenevaSessionFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SwitchFirm">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/SwitchFirm" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeClassString">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassString" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeClass">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClass" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteGSQL">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteGSQL" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReportAsPDF">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportAsPDF" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReportFormatted">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportFormatted" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReport">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetReportList">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetReportDetail">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportDetail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetQueryList">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryList" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetQueryDetail">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryDetail" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteQueryString">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryString" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteQuery">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQuery" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSelectString">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectString" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSelect">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelect" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="LoadRecord">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/LoadRecord" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSSRSReport">
+      <soap:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSSRSReport" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="GenevaSoapServiceTcpEndPoint" type="tns:IGenevaSoapService">
+    <wsp:PolicyReference URI="#GenevaSoapServiceTcpEndPoint_policy" />
+    <soap12:binding transport="http://schemas.microsoft.com/soap/tcp" />
+    <wsdl:operation name="GenevaConnection">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSession/GenevaConnection" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidGenevaCredentialsFault">
+        <soap12:fault use="literal" name="InvalidGenevaCredentialsFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidGenevaSessionFault">
+        <soap12:fault use="literal" name="InvalidGenevaSessionFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="Close">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSession/Close" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidGenevaSessionFault">
+        <soap12:fault use="literal" name="InvalidGenevaSessionFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="SwitchFirm">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/SwitchFirm" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeClassString">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClassString" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="DescribeClass">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/DescribeClass" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteGSQL">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteGSQL" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReportAsPDF">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportAsPDF" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReportFormatted">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReportFormatted" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteReport">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetReportList">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetReportDetail">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetReportDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetQueryList">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryList" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="GetQueryDetail">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/GetQueryDetail" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteQueryString">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQueryString" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteQuery">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteQuery" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSelectString">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelectString" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSelect">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSelect" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="LoadRecord">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/LoadRecord" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+    <wsdl:operation name="ExecuteSSRSReport">
+      <soap12:operation soapAction="http://www.advent.com/geneva/soapservice/IGenevaSoapService/ExecuteSSRSReport" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+      <wsdl:fault name="GenevaErrorFault">
+        <soap12:fault use="literal" name="GenevaErrorFault" namespace="" />
+      </wsdl:fault>
+      <wsdl:fault name="InvalidParameterFault">
+        <soap12:fault use="literal" name="InvalidParameterFault" namespace="" />
+      </wsdl:fault>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="GenevaSoapService">
+    <wsdl:port name="GenevaBasicHttpEndPoint" binding="tns:GenevaBasicHttpEndPoint">
+      <soap:address location="http://vm2k8r2/GenevaSoapInterface/GenevaSoapService.svc" />
+    </wsdl:port>
+    <wsdl:port name="GenevaSoapServiceTcpEndPoint" binding="tns:GenevaSoapServiceTcpEndPoint">
+      <soap12:address location="net.tcp://vm2k8r2/GenevaSoapInterface/GenevaSoapService.svc" />
+      <wsa10:EndpointReference>
+        <wsa10:Address>net.tcp://vm2k8r2/GenevaSoapInterface/GenevaSoapService.svc</wsa10:Address>
+        <Identity xmlns="http://schemas.xmlsoap.org/ws/2006/02/addressingidentity">
+          <Spn>host/VM2K8R2</Spn>
+        </Identity>
+      </wsa10:EndpointReference>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
